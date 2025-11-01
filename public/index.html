@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -50,6 +50,432 @@
             document.querySelector('#messages').appendChild(li)
         })
 
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #111b21;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 95vh;
+            background: #0b141a;
+            display: flex;
+            flex-direction: column;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Header */
+        .chat-header {
+            background: #202c33;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #2a3942;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00a884, #00d9a0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .chat-title {
+            color: #e9edef;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .chat-status {
+            color: #8696a0;
+            font-size: 13px;
+            margin-top: 2px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .status-indicator.connected {
+            background: #00d9a0;
+        }
+
+        .status-indicator.disconnected {
+            background: #ea4242;
+        }
+
+        /* Messages Area */
+        .messages-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #0b141a;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.02) 35px, rgba(255,255,255,.02) 70px);
+        }
+
+        .messages-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .messages-area::-webkit-scrollbar-thumb {
+            background: #374248;
+            border-radius: 3px;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            display: flex;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+        .message.received {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 65%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.sent .message-bubble {
+            background: #005c4b;
+            color: #e9edef;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.received .message-bubble {
+            background: #202c33;
+            color: #e9edef;
+            border-bottom-left-radius: 2px;
+        }
+
+        .message-text {
+            font-size: 14.2px;
+            line-height: 19px;
+            margin-bottom: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #8696a0;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+        }
+
+        .message.sent .message-time {
+            color: #8696a0;
+        }
+
+        .check-mark {
+            font-size: 16px;
+            color: #53bdeb;
+        }
+
+        /* Input Area */
+        .input-area {
+            background: #202c33;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #2a3942;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #2a3942;
+            border-radius: 8px;
+            padding: 8px 15px;
+        }
+
+        #input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #e9edef;
+            font-size: 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #input::placeholder {
+            color: #8696a0;
+        }
+
+        button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        #sendbtn {
+            width: 45px;
+            height: 45px;
+            background: #00a884;
+            color: white;
+        }
+
+        #sendbtn:hover {
+            background: #00976f;
+        }
+
+        #toggle-btn {
+            padding: 8px 16px;
+            background: #2a3942;
+            color: #e9edef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        #toggle-btn:hover {
+            background: #374248;
+        }
+
+        #toggle-btn.disconnected {
+            background: #00a884;
+        }
+
+        /* Date Divider */
+        .date-divider {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .date-label {
+            display: inline-block;
+            background: #202c33;
+            color: #8696a0;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 500;
+        }
+
+        /* Icons */
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: #8696a0;
+        }
+
+        #sendbtn .icon {
+            fill: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .message-bubble {
+                max-width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="avatar">G</div>
+            <div class="chat-info">
+                <div class="chat-title">Group Chat</div>
+                <div class="chat-status">
+                    <span class="status-indicator connected" id="status-indicator"></span>
+                    <span id="status-text">connected</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="messages-area" id="messages">
+            <div class="date-divider">
+                <span class="date-label" id="today-date">Today</span>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <form id="myform" style="display: flex; flex: 1; gap: 10px; align-items: center;">
+                <div class="input-wrapper">
+                    <input type="text" id="input" placeholder="Type a message" autocomplete="off">
+                </div>
+                <button id="sendbtn" type="submit">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+                <button id="toggle-btn" type="button">Disconnect</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        
+        const input = document.querySelector('#input');
+        const form = document.querySelector('#myform');
+        const toggleBtn = document.querySelector('#toggle-btn');
+        const statusIndicator = document.querySelector('#status-indicator');
+        const statusText = document.querySelector('#status-text');
+        const messagesArea = document.querySelector('#messages');
+        
+        // Set today's date
+        const today = new Date();
+        const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
+        document.querySelector('#today-date').innerText = today.toLocaleDateString('en-US', dateOptions);
+        
+        // Counter to alternate between sent and received for demo
+        let messageCounter = 0;
+        
+        // Send message
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const message = input.value.trim();
+            if (message) {
+                socket.emit('message', message);
+                input.value = '';
+            }
+        };
+        
+        // Toggle connection
+        toggleBtn.onclick = (e) => {
+            e.preventDefault();
+            if (socket.connected) {
+                socket.disconnect();
+                toggleBtn.innerText = 'Connect';
+                toggleBtn.classList.add('disconnected');
+                statusIndicator.classList.remove('connected');
+                statusIndicator.classList.add('disconnected');
+                statusText.innerText = 'disconnected';
+            } else {
+                socket.connect();
+                toggleBtn.innerText = 'Disconnect';
+                toggleBtn.classList.remove('disconnected');
+                statusIndicator.classList.add('connected');
+                statusIndicator.classList.remove('disconnected');
+                statusText.innerText = 'connected';
+            }
+        };
+        
+        // Receive message
+        socket.on('message', (msg) => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${messageCounter % 2 === 0 ? 'sent' : 'received'}`;
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-text">${escapeHtml(msg)}</div>
+                    <div class="message-time">
+                        ${timeString}
+                        ${messageCounter % 2 === 0 ? '<span class="check-mark">✓✓</span>' : ''}
+                    </div>
+                </div>
+            `;
+            
+            messagesArea.appendChild(messageDiv);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+            
+            messageCounter++;
+        });
+        
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Auto-scroll on new messages
+        const observer = new MutationObserver(() => {
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        });
+        
+        observer.observe(messagesArea, { childList: true });
     </script>
 </body>
 </html>
