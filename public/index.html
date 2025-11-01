@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+</head>
+<body>
+    <h1>Chatting App</h1>
+
+    <ul id="messages">
+
+    </ul>
+
+    <form id="myrorm" action="">
+        <label for="input">Message</label>
+        <input type="text" id="input" autocomplete="off">
+        <button id="sendbtn">send</button>
+        <button id="toggle-btn">disconnect</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io()
+
+        const input = document.querySelector('#input')
+        const btn = document.querySelector('#sendbtn')
+        const togglebtn = document.querySelector('#toggle-btn')
+
+        btn.onclick = (e)=>{
+            e.preventDefault();
+            socket.emit('message', input.value.trim())
+            input.value = '';
+        }
+
+        togglebtn.onclick = (e)=>{
+            e.preventDefault();
+            if(socket.connected){
+                togglebtn.innerText = 'Connect'
+                socket.disconnect();
+            }else{
+                togglebtn.innerText = 'Disconnect'
+                socket.connect();
+            }
+        }
+
+        socket.on('message', (msg)=>{
+            const li = document.createElement('li')
+            li.innerText = msg;
+            document.querySelector('#messages').appendChild(li)
+        })
+
+    </script>
+</body>
+</html>
