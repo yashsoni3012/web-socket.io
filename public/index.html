@@ -56,6 +56,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -145,8 +146,8 @@
             padding: 20px;
             overflow-y: auto;
             background: #0b141a;
-            background-image: 
-                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.02) 35px, rgba(255,255,255,.02) 70px);
+            background-image:
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255, 255, 255, .02) 35px, rgba(255, 255, 255, .02) 70px);
         }
 
         .messages-area::-webkit-scrollbar {
@@ -172,6 +173,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -376,6 +378,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="chat-container">
         <!-- Header -->
@@ -411,7 +414,7 @@
                     <div class="col-auto">
                         <button class="btn btn-send" type="submit">
                             <svg class="icon" viewBox="0 0 24 24">
-                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                             </svg>
                         </button>
                     </div>
@@ -427,22 +430,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
     <script>
         const socket = io();
-        
+
         const input = document.querySelector('#input');
         const form = document.querySelector('#myform');
         const toggleBtn = document.querySelector('#toggle-btn');
         const statusIndicator = document.querySelector('#status-indicator');
         const statusText = document.querySelector('#status-text');
         const messagesArea = document.querySelector('#messages');
-        
+
         // Set today's date
         const today = new Date();
         const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
         document.querySelector('#today-date').innerText = today.toLocaleDateString('en-US', dateOptions);
-        
+
         // Counter to alternate between sent and received for demo
         let messageCounter = 0;
-        
+
         // Send message
         form.onsubmit = (e) => {
             e.preventDefault();
@@ -452,7 +455,7 @@
                 input.value = '';
             }
         };
-        
+
         // Toggle connection
         toggleBtn.onclick = (e) => {
             e.preventDefault();
@@ -472,16 +475,16 @@
                 statusText.innerText = 'connected';
             }
         };
-        
+
         // Receive message
         socket.on('message', (msg) => {
             const messageDiv = document.createElement('div');
             const isSent = messageCounter % 2 === 0;
             messageDiv.className = `message ${isSent ? 'text-end' : 'text-start'} ${isSent ? 'sent' : 'received'}`;
-            
+
             const now = new Date();
             const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-            
+
             messageDiv.innerHTML = `
                 <div class="message-bubble">
                     <div class="message-text">${escapeHtml(msg)}</div>
@@ -491,26 +494,27 @@
                     </div>
                 </div>
             `;
-            
+
             messagesArea.appendChild(messageDiv);
             messagesArea.scrollTop = messagesArea.scrollHeight;
-            
+
             messageCounter++;
         });
-        
+
         // Helper function to escape HTML
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-        
+
         // Auto-scroll on new messages
         const observer = new MutationObserver(() => {
             messagesArea.scrollTop = messagesArea.scrollHeight;
         });
-        
+
         observer.observe(messagesArea, { childList: true });
     </script>
 </body>
+
 </html>
